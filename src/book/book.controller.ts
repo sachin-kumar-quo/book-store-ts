@@ -6,19 +6,29 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { Book } from './book.schema';
 import { BookService } from './book.service';
-import { CreateBookDto } from './dto/index.dto';
+import { CreateBookDto, QueryOptions } from './dto/index.dto';
 
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  getBooks() {
-    return this.bookService.findAll();
+  getBooks(@Query() query) {
+    const { limit = 10, page = 1, sort = '_id', order = 1 } = query;
+    const options: QueryOptions = {
+      limit: Number(limit),
+      offset: Number(page - 1) * Number(limit),
+      sort: sort,
+      order: Number(order),
+      text: query.text,
+    };
+    return this.bookService.findAll(options);
   }
+
   @Get('/:id')
   getBookById(@Param('id') id: string) {
     return this.bookService.findOne(id);

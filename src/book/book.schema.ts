@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, ObjectId, Schema as MongooseSchema } from 'mongoose';
+import { Author } from 'src/author/author.schema';
 
 @Schema()
 export class Book {
   @Prop()
   title: string;
 
-  @Prop()
-  author: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Author' })
+  author: Author;
 
   @Prop()
   publisher: string;
@@ -17,4 +18,6 @@ export class Book {
 }
 
 export type BookDocument = Book & Document;
-export const BookSchema = SchemaFactory.createForClass(Book);
+const BookSchema = SchemaFactory.createForClass(Book);
+BookSchema.index({ title: 'text', author: 'text' });
+export { BookSchema };
