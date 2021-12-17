@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Res, Response } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Response as EResponse } from 'express';
+import { Response } from 'express';
 import { LoginDto, registerDto, resultDto } from './dto/index.dto';
 import { UserService } from './user.service';
 
@@ -13,13 +13,17 @@ export class UserController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: LoginDto): Promise<resultDto> {
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<resultDto> {
     const user = await this.userService.findOneByEmail(body.email);
     if (user) {
       const isMatch = await bcrypt.compare(body.password, user.password);
       if (isMatch) {
         const payload = { email: user.email, id: user.id, name: user.name };
         const token = await this.jwtService.signAsync(payload);
+        response.cookie('token', token);
         return { message: 'success', error: false, user: user, token: token };
       }
     } else {

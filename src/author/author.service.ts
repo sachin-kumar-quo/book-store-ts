@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { QueryOptions } from 'src/book/dto/index.dto';
 import { Author, AuthorDocument } from './author.schema';
 
 @Injectable()
@@ -9,8 +10,20 @@ export class AuthorService {
     @InjectModel('Author') private readonly authorModel: Model<AuthorDocument>,
   ) {}
 
-  async findAll(): Promise<AuthorDocument[]> {
-    return await this.authorModel.find().exec();
+  async findAll(options: QueryOptions): Promise<AuthorDocument[]> {
+    if (options.text) {
+      console.log('options.text', options.text);
+      return await this.authorModel
+        .find({
+          $text: { $search: options.text },
+        })
+        .skip(options.offset)
+        .limit(options.limit);
+    }
+    return await this.authorModel
+      .find()
+      .skip(options.offset)
+      .limit(options.limit);
   }
 
   async findOne(id: string): Promise<AuthorDocument> {
