@@ -1,4 +1,4 @@
-import { User, UserDocument } from '../user.schema';
+import { UserDocument } from '../user.schema';
 
 export class LoginDto {
   id: string;
