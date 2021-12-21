@@ -9,13 +9,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGaurd } from 'src/gaurds/auth.gaurd';
+import { AuthGaurd } from '../gaurds/auth.gaurd';
 import { Book } from './book.schema';
 import { BookService } from './book.service';
 import { CreateBookDto, QueryOptions } from './dto/index.dto';
 
 @Controller('book')
-// @UseGuards(AuthGaurd)
+@UseGuards(AuthGaurd)
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
