@@ -6,6 +6,7 @@ import { AuthorModule } from 'src/author/author.module';
 import { BookModule } from 'src/book/book.module';
 import { UserModule } from 'src/user/user.module';
 import configuration from 'src/config/configuration';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -15,14 +16,15 @@ import configuration from 'src/config/configuration';
     BookModule,
     AuthorModule,
     UserModule,
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: `mongodb://${configService.get('DB_HOST')}:${configService.get(
-          'DB_PORT',
-        )}/${configService.get('DB_NAME')}`,
-      }),
-      inject: [ConfigService],
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3406,
+      username: 'root',
+      password: 'mypassword',
+      database: 'nestbookStore',
+      autoLoadEntities: true,
+      synchronize: true,
     }),
   ],
   controllers: [],

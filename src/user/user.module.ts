@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
-import { UserSchema } from './user.schema';
+import { User } from './user.entity';
 import { UserService } from './user.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: 'secretKey',
       signOptions: { expiresIn: '1h' },

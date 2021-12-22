@@ -1,4 +1,4 @@
-import { UserDocument } from '../user.schema';
+import { User } from '../user.entity';
 
 export class LoginDto {
   id: string;
@@ -14,5 +14,5 @@ export class resultDto {
   error: boolean;
   message: string;
   token?: string;
-  user?: UserDocument;
+  user?: User;
 }

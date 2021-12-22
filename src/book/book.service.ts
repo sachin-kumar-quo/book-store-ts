@@ -1,40 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
 
-import { Book, BookDocument } from './book.schema';
+import { Book } from './book.entity';
 import { QueryOptions } from './dto/index.dto';
 
 @Injectable()
 export class BookService {
-  constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
-  async findOne(id: string): Promise<BookDocument> {
-    return await this.bookModel.findById(id);
+  constructor(@InjectRepository(Book) private bookModel: Repository<Book>) {}
+  async findOne(id: string): Promise<Book> {
+    return await this.bookModel.findOne(id);
   }
-  async findAll(options: QueryOptions): Promise<BookDocument[]> {
+  async findAll(options: QueryOptions): Promise<Book[]> {
     if (options.text) {
-      console.log('options.text', options.text);
-      return await this.bookModel
-        .find({
-          $text: { $search: options.text },
-        })
-        .skip(options.offset)
-        .limit(options.limit);
+      return await this.bookModel.find({
+        where: { title: Like(`%${options.text}%`) },
+        take: options.limit,
+        skip: options.offset,
+      });
     }
-    return await this.bookModel
-      .find()
-      .skip(options.offset)
-      .limit(options.limit);
+    return await this.bookModel.find({
+      take: options.limit,
+      skip: options.offset,
+    });
   }
 
-  async create(book: Book): Promise<BookDocument> {
-    const newBook = new this.bookModel(book);
-    return newBook.save();
+  async create(book: Book): Promise<Book> {
+    const newBook = this.bookModel.create(book);
+    return await this.bookModel.save(newBook);
   }
-  async update(id: string, book: Book): Promise<BookDocument> {
-    return await this.bookModel.findByIdAndUpdate(id, book);
+  async update(id: string, updatedbBook: Book): Promise<Book> {
+    return await this.bookModel.save({ id, ...updatedbBook });
   }
-  async delete(id: string): Promise<BookDocument> {
-    return await this.bookModel.findByIdAndDelete(id);
+  async delete(id: string) {
+    return await this.bookModel.delete(id);
   }
 }

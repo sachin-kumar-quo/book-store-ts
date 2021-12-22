@@ -5,15 +5,15 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { IsLoggedInMiddleware } from 'src/middlewares/login.middleware';
 import { BookController } from './book.controller';
-import { BookSchema } from './book.schema';
+import { Book } from './book.entity';
 import { BookService } from './book.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Book', schema: BookSchema }]),
+    TypeOrmModule.forFeature([Book]),
     JwtModule.register({
       secret: 'secretKey',
       signOptions: { expiresIn: '1h' },

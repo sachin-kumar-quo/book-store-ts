@@ -1,6 +1,7 @@
 import { Author } from 'src/author/author.schema';
 
 export class CreateBookDto {
+  id: number;
   title: string;
   publisher: string;
   published: Date;
@@ -8,6 +9,7 @@ export class CreateBookDto {
 }
 
 export class updateBookDto {
+  id: number;
   title: string;
   publisher: string;
   published: Date;

@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { QueryOptions } from 'mongoose';
-import { Author, AuthorDocument } from './author.schema';
+import { Author } from './author.entity';
 import { AuthorService } from './author.service';
 
 @Controller('author')
@@ -17,7 +17,7 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @Get()
-  getAuthors(@Query() query): Promise<AuthorDocument[]> {
+  getAuthors(@Query() query): Promise<Author[]> {
     const { limit = 10, page = 1, sort = '_id', order = 1 } = query;
     const options: QueryOptions = {
       limit: Number(limit),
@@ -30,25 +30,22 @@ export class AuthorController {
   }
 
   @Get('/:id')
-  getAuthor(@Param('id') id: string): Promise<AuthorDocument> {
+  getAuthor(@Param('id') id: number): Promise<Author> {
     return this.authorService.findOne(id);
   }
 
   @Post()
-  createAuthor(@Body() body: Author): Promise<AuthorDocument> {
+  createAuthor(@Body() body: Author): Promise<Author> {
     return this.authorService.create(body);
   }
 
   @Put('/:id')
-  updateAuthor(
-    @Param('id') id: string,
-    @Body() body: Author,
-  ): Promise<AuthorDocument> {
+  updateAuthor(@Param('id') id: number, @Body() body: Author): Promise<Author> {
     return this.authorService.update(id, body);
   }
 
   @Delete('/:id')
-  deleteAuthor(@Param('id') id: string): Promise<AuthorDocument> {
+  deleteAuthor(@Param('id') id: number) {
     return this.authorService.delete(id);
   }
 }

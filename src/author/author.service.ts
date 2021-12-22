@@ -1,46 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { QueryOptions } from 'src/book/dto/index.dto';
-import { Author, AuthorDocument } from './author.schema';
+import { Repository, Like } from 'typeorm';
+import { Author } from './author.entity';
 
 @Injectable()
 export class AuthorService {
   constructor(
-    @InjectModel('Author') private readonly authorModel: Model<AuthorDocument>,
+    @InjectRepository(Author)
+    private readonly authorModel: Repository<Author>,
   ) {}
 
-  async findAll(options: QueryOptions): Promise<AuthorDocument[]> {
+  async findAll(options: QueryOptions): Promise<Author[]> {
     if (options.text) {
-      console.log('options.text', options.text);
-      return await this.authorModel
-        .find({
-          $text: { $search: options.text },
-        })
-        .skip(options.offset)
-        .limit(options.limit);
+      return await this.authorModel.find({
+        where: { title: Like(`%${options.text}%`) },
+        take: options.limit,
+        skip: options.offset,
+      });
     }
-    return await this.authorModel
-      .find()
-      .skip(options.offset)
-      .limit(options.limit);
+    return await this.authorModel.find({
+      take: options.limit,
+      skip: options.offset,
+    });
   }
 
-  async findOne(id: string): Promise<AuthorDocument> {
-    return await this.authorModel.findById(id).exec();
+  async findOne(id: number): Promise<Author> {
+    return await this.authorModel.findOne(id);
   }
 
-  async create(author: Author): Promise<AuthorDocument> {
-    return await new this.authorModel(author).save();
+  async create(author: Author): Promise<Author> {
+    const newAuthor = this.authorModel.create(author);
+    return await this.authorModel.save(newAuthor);
   }
 
-  async update(id: string, author: Author): Promise<AuthorDocument> {
-    return await this.authorModel
-      .findByIdAndUpdate(id, author, { new: true })
-      .exec();
+  async update(id: number, author: Author): Promise<Author> {
+    return await this.authorModel.save({ id, ...author });
   }
 
-  async delete(id: string): Promise<AuthorDocument> {
-    return await this.authorModel.findByIdAndRemove(id).exec();
+  async delete(id: number) {
+    return await this.authorModel.delete(id);
   }
 }
