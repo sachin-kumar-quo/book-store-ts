@@ -5,6 +5,7 @@ export class CreateBookDto {
   publisher: string;
   published: Date;
   author: Author;
+  id: string;
 }
 
 export class updateBookDto {

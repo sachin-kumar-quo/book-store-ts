@@ -14,17 +14,15 @@ export class BookService {
   async findAll(options: QueryOptions): Promise<BookDocument[]> {
     if (options.text) {
       console.log('options.text', options.text);
-      return await this.bookModel
-        .find({
-          $text: { $search: options.text },
-        })
-        .skip(options.offset)
-        .limit(options.limit);
+      return await this.bookModel.find({
+        $text: { $search: options.text },
+      });
+      // .skip(options.offset) // skip(offset) for testing TODO: add in testing
+      // .limit(options.limit);
     }
-    return await this.bookModel
-      .find()
-      .skip(options.offset)
-      .limit(options.limit);
+    return await this.bookModel.find();
+    // .skip(options.offset) // skip(offset) for testing TODO: add in testing
+    // .limit(options.limit);
   }
 
   async create(book: Book): Promise<BookDocument> {

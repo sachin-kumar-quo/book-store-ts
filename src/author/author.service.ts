@@ -13,21 +13,19 @@ export class AuthorService {
   async findAll(options: QueryOptions): Promise<AuthorDocument[]> {
     if (options.text) {
       console.log('options.text', options.text);
-      return await this.authorModel
-        .find({
-          $text: { $search: options.text },
-        })
-        .skip(options.offset)
-        .limit(options.limit);
+      return await this.authorModel.find({
+        $text: { $search: options.text },
+      });
+      // .skip(options.offset)    // for testing only
+      // .limit(options.limit);
     }
-    return await this.authorModel
-      .find()
-      .skip(options.offset)
-      .limit(options.limit);
+    return await this.authorModel.find();
+    // .skip(options.offset)   // for testing only
+    // .limit(options.limit);
   }
 
   async findOne(id: string): Promise<AuthorDocument> {
-    return await this.authorModel.findById(id).exec();
+    return await this.authorModel.findById(id);
   }
 
   async create(author: Author): Promise<AuthorDocument> {
@@ -35,12 +33,10 @@ export class AuthorService {
   }
 
   async update(id: string, author: Author): Promise<AuthorDocument> {
-    return await this.authorModel
-      .findByIdAndUpdate(id, author, { new: true })
-      .exec();
+    return await this.authorModel.findByIdAndUpdate(id, author, { new: true });
   }
 
   async delete(id: string): Promise<AuthorDocument> {
-    return await this.authorModel.findByIdAndRemove(id).exec();
+    return await this.authorModel.findByIdAndRemove(id);
   }
 }
