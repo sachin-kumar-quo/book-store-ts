@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Author } from 'src/author/author.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Book {
@@ -8,8 +15,9 @@ export class Book {
   @Column()
   title: string;
 
-  @Column()
-  author: string;
+  @OneToOne((type) => Author)
+  @JoinColumn()
+  author: Author;
 
   @Column()
   published: Date;
