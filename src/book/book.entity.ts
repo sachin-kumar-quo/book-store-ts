@@ -15,6 +15,7 @@ export class Book {
   @Column()
   title: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @OneToOne((type) => Author)
   @JoinColumn()
   author: Author;
