@@ -18,9 +18,7 @@ import configuration from 'src/config/configuration';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: `mongodb://${configService.get('DB_HOST')}:${configService.get(
-          'DB_PORT',
-        )}/${configService.get('DB_NAME')}`,
+        uri: 'mongodb+srv://sachin:sachin@cluster0.qzpqp.mongodb.net/nestbookstore?retryWrites=true&w=majority',
       }),
       inject: [ConfigService],
     }),
